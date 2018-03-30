@@ -2,7 +2,6 @@ set nocompatible
 filetype off
 
 set rtp+=~/.vim/bundle/Vundle.vim
-"set term=builtin_ansi
 
 call vundle#begin()
 
@@ -52,29 +51,29 @@ Plugin 'ngmy/vim-rubocop'
 call vundle#end()
 filetype plugin indent on
 
+" Syntax
 syntax on
+set t_Co=256
+set background=dark
 "colorscheme dracula
 "colorscheme onehalfdark
 
+
+" Map Leader
+let mapleader = ","
+
+" Airline
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 0
 let g:jsx_ext_required = 0
 
-set t_Co=256
-set background=dark
-
+let g:airline_theme='angr' " luna
 let &t_AB="\e[48;5;%dm"
 let &t_AF="\e[38;5;%dm"
-let g:airline_theme='angr'
-"let g:lightline.colorscheme='onehalfdark'
-
-let mapleader = ","
-
-let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-let g:ctrlp_use_caching = 0
 let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
 let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-"let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
+let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+let g:ctrlp_use_caching = 0
 
 runtime macros/matchit.vim
 
@@ -101,13 +100,13 @@ set noesckeys
 set ttimeout
 set ttimeoutlen=1
 set relativenumber
-
 set path=$PWD/**
 
-" Vimrc
+" Key Mappings
 nmap <leader>vr :tabe $MYVIMRC<cr>
 nmap <leader>rv :source $MYVIMRC<cr>
 
+" Debuggers
 imap cll console.log();<Esc>==f(a
 nmap cll yiwocll
 imap ppp binding.pry
@@ -121,7 +120,7 @@ nmap iee yiwoiee
 nnoremap <leader>ta :ta<SPACE>
 nnoremap <leader>tb :TagbarToggle<CR>
 nnoremap <leader><space> :noh<CR>
-nnoremap <silent><leader>F :CtrlPClearAllCaches<CR>:CtrlPCurWD<CR>
+nnoremap <leader>C :CtrlPClearCache<cr>
 nnoremap <leader>x :only<CR>
 map \ :NERDTreeToggle<CR>
 map \| :NERDTreeFind<CR>
@@ -129,17 +128,17 @@ map <leader>m :CtrlPBuffer<CR>
 map <leader>rt :!~/.vim/bin/update_ctags 2>/dev/null &<CR>
 map <leader>g :Gblame<CR>
 map <leader>bb ,m<cr>
-map <leader>nn :bn<cr>
-map <leader>w :w<cr>
-map <leader>q :wq<cr>
-nmap <space>Q :q!<cr>
-nmap <space>w :set wrap!<cr>
-nmap 0 ^
+nmap <space>w :w<cr>
+nmap <space>q :q!<cr>
+nmap <leader>q :wq<cr>
+nmap <leader>w :set wrap!<cr>
 map <space><tab> :Tabularize /
 map <leader>p :pu<cr>
+nmap 0 ^
 
 autocmd VimResized * :wincmd =
 
+" Move lines
 nnoremap <leader>vv :m .+1<CR>==
 nnoremap <leader>ff :m .-2<CR>==
 inoremap <leader>vv <Esc>:m .+1<CR>==gi
@@ -148,48 +147,50 @@ vnoremap <leader>vv :m '>+1<CR>gv=gv
 vnoremap <leader>ff :m '<-2<CR>gv=gv
 nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
 nnoremap <leader>= :wincmd =<cr>
+
+" Split windows
 map <leader>- :split<cr>
 map <leader>\ :vsplit<cr>
 
-"au BufWritePre *.rb :%s/\s\+$//e
 autocmd BufWritePre * :%s/\s\+$//e
-"autocmd Filetype help nnoremap <buffer> q :q<CR>
 au VimEnter * highlight clear SignColumn
 
-highlight Comment cterm=italic
+" Italics
+hi htmlArg gui=italic
+hi Comment gui=italic
+hi Type    gui=italic
+hi htmlArg cterm=italic
+hi Comment cterm=italic
+hi Type    cterm=italic
+
 " Specs
-"let g:rspec_command = "Dispatch bin/rspec {spec}"
-"let g:rspec_command = "!bundle exec spring rspec --drb {spec}"
 let g:rspec_command = "Dispatch docker-compose exec test bundle exec spring rspec {spec}"
+nmap <space>T :w<cr>:call RunCurrentSpecFile()<CR>
+nmap <space>t :w<cr>:call RunNearestSpec()<CR>
+nmap <space>l :call RunLastSpec()<CR>
+nmap <space>A :call RunAllSpecs()<CR>
+"let g:rspec_command = "!bundle exec spring rspec --drb {spec}"
+"let g:rspec_command = "Dispatch bin/rspec {spec}"
 "nmap <space>T :w<cr>:call RunCurrentSpecFile()<CR>
 "nmap <space>t :w<cr>:call RunNearestSpec()<CR>
 "nmap <space>l :call RunLastSpec()<CR>
 "nmap <space>A :call RunAllSpecs()<CR>
 
-nmap <space>T :w<cr>:call RunCurrentSpecFile()<CR>
-nmap <space>t :w<cr>:call RunNearestSpec()<CR>
-nmap <space>l :call RunLastSpec()<CR>
-nmap <space>A :call RunAllSpecs()<CR>
-"nmap <silent> <space>t :TestNearest<CR>
-"nmap <silent> <space>T :TestFile<CR>
-"nmap <silent> <space>a :TestSuite<CR>
-"nmap <silent> <space>l :TestLast<CR>
-"nmap <silent> <space>g :TestVisit<CR>
-
 " Navigation
-map <leader>ja :CtrlP app<cr>
-map <leader>jm :CtrlP app/models<cr>
-map <leader>jc :CtrlP app/controllers<cr>
-map <leader>jv :CtrlP app/views<cr>
-map <leader>jh :CtrlP app/helpers<cr>
-map <leader>js :CtrlP app/services<cr>
-map <leader>jw :CtrlP app/workers<cr>
-map <leader>jl :CtrlP lib<cr>
-map <leader>jp :CtrlP public<cr>
-map <leader>jt :CtrlP spec<cr>
-map <leader>jC :CtrlP config<cr>
-map <leader>jd :CtrlP db<cr>
-map <leader>jf :CtrlP spec/support/factories<cr>
+map <leader>ja :CtrlP app<CR>
+map <leader>jm :CtrlP app/models<CR>
+map <leader>jc :CtrlP app/controllers<CR>
+map <leader>jv :CtrlP app/views<CR>
+map <leader>jh :CtrlP app/helpers<CR>
+map <leader>js :CtrlP app/services<CR>
+map <leader>jw :CtrlP app/workers<CR>
+map <leader>jr :CtrlP app/javascript_apps/songs<CR>
+map <leader>jl :CtrlP lib<CR>
+map <leader>jp :CtrlP public<CR>
+map <leader>jt :CtrlP spec<CR>
+map <leader>jC :CtrlP config<CR>
+map <leader>jd :CtrlP db<CR>
+map <leader>jf :CtrlP spec/support/factories<CR>
 
 map <leader>aa :Ag! -i <c-r>=expand("<cword>")<cr><cr>
 map <leader>sa :Ag! -i <c-r>=expand("<cword>")<cr> app/<cr>
@@ -199,6 +200,7 @@ map <leader>sv :Ag! -i <c-r>=expand("<cword>")<cr> app/views<cr>
 map <leader>sh :Ag! -i <c-r>=expand("<cword>")<cr> app/helpers<cr>
 map <leader>ss :Ag! -i <c-r>=expand("<cword>")<cr> app/services<cr>
 map <leader>sw :Ag! -i <c-r>=expand("<cword>")<cr> app/workers<cr>
+map <leader>sr :Ag! -i <c-r>=expand("<cword>")<cr> app/javascript_apps/songs<cr>
 map <leader>sl :Ag! -i <c-r>=expand("<cword>")<cr> lib/<cr>
 map <leader>sp :Ag! -i <c-r>=expand("<cword>")<cr> public/<cr>
 map <leader>st :Ag! -i <c-r>=expand("<cword>")<cr> spec/<cr>
@@ -214,6 +216,7 @@ map <space>sv :Ag! -i app/views/<C-Left>
 map <space>sh :Ag! -i app/helpers/<C-Left>
 map <space>ss :Ag! -i app/services/<C-Left>
 map <space>sw :Ag! -i app/workers/<C-Left>
+map <space>sr :Ag! -i app/javascript_apps/songs<C-Left>
 map <space>sl :Ag! -i lib/<C-Left>
 map <space>sp :Ag! -i public/<C-Left>
 map <space>st :Ag! -i spec/<C-Left>
@@ -231,12 +234,4 @@ map <space>sf :Ag! -i spec/support/factories/<C-Left>
 
 "map <space>aa :Ag! -i<space>
 "map <space>sa :Ag! -i lib/<C-Left>
-"hi htmlArg gui=italic
-"hi Comment gui=italic
-"hi Type    gui=italic
-"hi htmlArg cterm=italic
-"hi Comment cterm=italic
-"hi Type    cterm=italic
-
-highlight Comment cterm=italic
 
