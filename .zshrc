@@ -2,6 +2,8 @@ export ZSH=/Users/frank/.oh-my-zsh
 export PATH="$HOME/.rbenv/bin:$PATH"
 #eval "$(rbenv init -)"
 
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=red
+
 # Themes
 # #ZSH_THEME="robbyrussell"
 ZSH_THEME="cobalt2"
@@ -108,6 +110,7 @@ alias tmux="TERM=screen-256color-bce tmux"
 
 alias pg-start="launchctl load ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
 alias pg-stop="launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
+alias c="clear"
 
 function dpry {
   web_pid=$(docker ps | grep tcwww_web | awk '{print $1}')
@@ -124,5 +127,16 @@ function docker_refresh() {
   docker_stop;
   docker_destroy;
   docker_start;
+}
+
+function docker_copy () {
+  docker cp $(docker ps -qf "name=web"):app/$1 $1
+}
+
+function docker_rake () {
+  commands_array=($@)
+  len=${#commands_array[@]}
+  other_commands=${commands_array[@]:2:$len-1}
+  docker-compose exec $1 rake $2 $other_commands
 }
 

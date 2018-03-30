@@ -2,7 +2,7 @@ set nocompatible
 filetype off
 
 set rtp+=~/.vim/bundle/Vundle.vim
-set term=builtin_ansi
+"set term=builtin_ansi
 
 call vundle#begin()
 
@@ -45,12 +45,16 @@ Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 Plugin 'godlygeek/tabular'
 Plugin 'vim-syntastic/syntastic'
+Plugin 'gosukiwi/vim-atom-dark'
+Plugin 'sonph/onehalf'
+Plugin 'ngmy/vim-rubocop'
 
 call vundle#end()
 filetype plugin indent on
 
 syntax on
 "colorscheme dracula
+"colorscheme onehalfdark
 
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 0
@@ -61,7 +65,8 @@ set background=dark
 
 let &t_AB="\e[48;5;%dm"
 let &t_AF="\e[38;5;%dm"
-let g:airline_theme='luna'
+let g:airline_theme='angr'
+"let g:lightline.colorscheme='onehalfdark'
 
 let mapleader = ","
 
@@ -125,7 +130,10 @@ map <leader>rt :!~/.vim/bin/update_ctags 2>/dev/null &<CR>
 map <leader>g :Gblame<CR>
 map <leader>bb ,m<cr>
 map <leader>nn :bn<cr>
-map <leader>w :set wrap!<cr>
+map <leader>w :w<cr>
+map <leader>q :wq<cr>
+nmap <space>Q :q!<cr>
+nmap <space>w :set wrap!<cr>
 nmap 0 ^
 map <space><tab> :Tabularize /
 map <leader>p :pu<cr>
@@ -148,6 +156,7 @@ autocmd BufWritePre * :%s/\s\+$//e
 "autocmd Filetype help nnoremap <buffer> q :q<CR>
 au VimEnter * highlight clear SignColumn
 
+highlight Comment cterm=italic
 " Specs
 "let g:rspec_command = "Dispatch bin/rspec {spec}"
 "let g:rspec_command = "!bundle exec spring rspec --drb {spec}"
@@ -222,3 +231,12 @@ map <space>sf :Ag! -i spec/support/factories/<C-Left>
 
 "map <space>aa :Ag! -i<space>
 "map <space>sa :Ag! -i lib/<C-Left>
+"hi htmlArg gui=italic
+"hi Comment gui=italic
+"hi Type    gui=italic
+"hi htmlArg cterm=italic
+"hi Comment cterm=italic
+"hi Type    cterm=italic
+
+highlight Comment cterm=italic
+
