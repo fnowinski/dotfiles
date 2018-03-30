@@ -5,11 +5,8 @@ export PATH="$HOME/.rbenv/bin:$PATH"
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=red
 
 # Themes
-# #ZSH_THEME="robbyrussell"
 ZSH_THEME="cobalt2"
-#
 HYPHEN_INSENSITIVE="true"
-# #ENABLE_CORRECTION=“true”
 
 plugins=(git)
 
@@ -71,6 +68,7 @@ alias kside="ps -ef | grep sidekiq | grep -v grep | awk '{print $2}' | xargs kil
 # Social/stats servers
 alias social-up='PORT=5000 foreman start -f Procfile.development'
 alias stats-up='PORT=9292 foreman s -f Procfile.development'
+
 # Stats rake tasks
 alias social-import-1='rake jgm:import_artist_content QUEUE=medium SOURCES="facebook_posts youtube soundcloud mixcloud"'
 alias social-import-2='rake jgm:twitter:import_pro_tweets'
@@ -80,13 +78,10 @@ alias social-import-MC='rake jgm:import_artist_content QUEUE=medium SOURCES="mix
 alias social-import-FB='rake jgm:import_artist_content QUEUE=medium SOURCES="facebook_posts"'
 alias social-import-SC='rake jgm:import_artist_content QUEUE=medium SOURCES="soundcloud"'
 
-alias tkill="tmux kill-session -t $1"
+alias tkill="killall tmux"
 alias tnew="tmux new -s "
 
-#docker-compose exec test RAILS_ENV=test bin/rake db:load
-
 source $ZSH/oh-my-zsh.sh
-#source $HOME/.zshenv
 
 Terminate () {
   lsof -i TCP:$1 | grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn} IPv4 | awk '{print $2}' | xargs kill -9
@@ -140,3 +135,24 @@ function docker_rake () {
   docker-compose exec $1 rake $2 $other_commands
 }
 
+github () {
+  if [ ! -d .git ]
+  then
+    echo "ERROR: This isnt a git directory" && return false
+  fi
+  base_url="https://github.com/tunecore/"
+  url=$base_url$(git_repo)
+  open $url
+}
+
+git_repo () {
+  if [ ! -d .git ]
+  then
+    echo "ERROR: This isnt a git directory" && return false
+  fi
+  git config --get remote.origin.url | regex "\/(.*)\.git" 1
+}
+
+regex () {
+    gawk 'match($0,/'$1'/, ary) {print ary['${2:-'0'}']}'
+}
