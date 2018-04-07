@@ -21,6 +21,7 @@ alias rz="source $ZSH/oh-my-zsh.sh"
 alias prodb='ssh centos@ec2-52-203-21-244.compute-1.amazonaws.com'
 alias prodb3='ssh -i ~/.ssh/tunecore1.pem centos@ec2-52-203-21-244.compute-1.amazonaws.com'
 alias ssh_batch="ssh -i ~/.ssh/tunecore1.pem ec2-user@ec2-34-237-114-113.compute-1.amazonaws.com"
+alias ssh_sip="ssh -i ~/.ssh/tunecore1.pem centos@ec2-54-81-144-199.compute-1.amazonaws.com"
 alias studio3="ssh centos@ec2-34-192-19-31.compute-1.amazonaws.com"
 alias studio4="ssh centos@ec2-52-0-169-56.compute-1.amazonaws.com"
 alias open_petri="ssh -i ~/.ssh/tunecore1.pem root@"
@@ -89,8 +90,8 @@ Terminate () {
 
 # Docker
 alias docker_start='docker-sync-stack start'
-alias docker_console='docker-compose exec web bundle exec spring rails console'
-alias docker_rspec='docker-compose exec test bundle exec rspec'
+alias dcon='docker-compose exec web bundle exec spring rails console'
+alias dspec='docker-compose exec test bundle exec rspec'
 alias docker_spring_rspec='docker-compose exec test bundle exec spring rspec'
 alias docker_stop='docker-compose down'
 alias docker_destroy='docker rmi -f `docker images -q -a`' #run docker down before
@@ -112,7 +113,7 @@ function dpry {
   docker attach $web_pid
 }
 
-function docker_restart() {
+function dstart() {
   docker_stop;
   docker-sync clean;
   docker_start;

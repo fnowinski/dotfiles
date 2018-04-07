@@ -46,7 +46,7 @@ Plugin 'godlygeek/tabular'
 Plugin 'vim-syntastic/syntastic'
 Plugin 'gosukiwi/vim-atom-dark'
 Plugin 'sonph/onehalf'
-Plugin 'ngmy/vim-rubocop'
+Plugin 'pwntester/cobalt2.vim'
 
 call vundle#end()
 filetype plugin indent on
@@ -58,6 +58,7 @@ set background=dark
 "colorscheme dracula
 "colorscheme onehalfdark
 
+"hi Normal ctermbg=none
 
 " Map Leader
 let mapleader = ","
@@ -67,7 +68,7 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 0
 let g:jsx_ext_required = 0
 
-let g:airline_theme='angr' " luna
+let g:airline_theme='luna' " luna
 let &t_AB="\e[48;5;%dm"
 let &t_AF="\e[38;5;%dm"
 let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
@@ -137,6 +138,10 @@ map <leader>p :pu<cr>
 nmap 0 ^
 
 autocmd VimResized * :wincmd =
+imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+nmap <space>e :edit %%
+nmap <space>v :view %%
 
 " Move lines
 nnoremap <leader>vv :m .+1<CR>==
@@ -154,6 +159,35 @@ map <leader>\ :vsplit<cr>
 
 autocmd BufWritePre * :%s/\s\+$//e
 au VimEnter * highlight clear SignColumn
+
+" Rename Current File
+function! RenameFile()
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'), 'file')
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        exec ':silent !rm ' . old_name
+        redraw!
+    endif
+endfunction
+map <leader>n :call RenameFile()<cr>
+
+" Promote Variable to Rspec Let
+function! PromoteToLet()
+  :normal! dd
+  " :exec '?^\s*it\>'
+  :normal! P
+  :.s/\(\w\+\) = \(.*\)$/let(:\1) { \2 }/
+  :normal ==
+endfunction
+:command! PromoteToLet :call PromoteToLet()
+:map <leader>l :PromoteToLet<cr>
+
+" Open up file to last cursor position
+autocmd BufReadPost *
+  \ if line("'\"") > 0 && line("'\"") <= line("$") |
+  \   exe "normal g`\"" |
+  \ endif
 
 " Italics
 hi htmlArg gui=italic
@@ -189,8 +223,9 @@ map <leader>jl :CtrlP lib<CR>
 map <leader>jp :CtrlP public<CR>
 map <leader>jt :CtrlP spec<CR>
 map <leader>jC :CtrlP config<CR>
-map <leader>jd :CtrlP db<CR>
+map <leader>jD :CtrlP db<CR>
 map <leader>jf :CtrlP spec/support/factories<CR>
+map <leader>jd :CtrlP %%<CR>
 
 map <leader>aa :Ag! -i <c-r>=expand("<cword>")<cr><cr>
 map <leader>sa :Ag! -i <c-r>=expand("<cword>")<cr> app/<cr>
@@ -205,24 +240,27 @@ map <leader>sl :Ag! -i <c-r>=expand("<cword>")<cr> lib/<cr>
 map <leader>sp :Ag! -i <c-r>=expand("<cword>")<cr> public/<cr>
 map <leader>st :Ag! -i <c-r>=expand("<cword>")<cr> spec/<cr>
 map <leader>sC :Ag! -i <c-r>=expand("<cword>")<cr> config/<cr>
-map <leader>sd :Ag! -i <c-r>=expand("<cword>")<cr> db/<cr>
+map <leader>sD :Ag! -i <c-r>=expand("<cword>")<cr> db/<cr>
 map <leader>sf :Ag! -i <c-r>=expand("<cword>")<cr> spec/support/factories<cr>
+map <leader>sd :Ag! -i <c-r>=expand("<cword>")<cr> %%<cr>
 
-map <space>aa :Ag! -i<space>
-map <space>sa :Ag! -i app/<C-Left>
-map <space>sm :Ag! -i app/models/<C-Left>
-map <space>sc :Ag! -i app/controllers/<C-Left>
-map <space>sv :Ag! -i app/views/<C-Left>
-map <space>sh :Ag! -i app/helpers/<C-Left>
-map <space>ss :Ag! -i app/services/<C-Left>
-map <space>sw :Ag! -i app/workers/<C-Left>
-map <space>sr :Ag! -i app/javascript_apps/songs<C-Left>
-map <space>sl :Ag! -i lib/<C-Left>
-map <space>sp :Ag! -i public/<C-Left>
-map <space>st :Ag! -i spec/<C-Left>
-map <space>sC :Ag! -i config/<C-Left>
-map <space>sd :Ag! -i db/<C-Left>
-map <space>sf :Ag! -i spec/support/factories/<C-Left>
+map <space>aa :Ag! -i <space>
+map <space>sa :Ag! -i <space>app/<C-Left><Left>
+map <space>sm :Ag! -i <space>app/models/<C-Left><Left>
+map <space>sc :Ag! -i <space>app/controllers/<C-Left><Left>
+map <space>sv :Ag! -i <space>app/views/<C-Left><Left>
+map <space>sh :Ag! -i <space>app/helpers/<C-Left><Left>
+map <space>ss :Ag! -i <space>app/services/<C-Left><Left>
+map <space>sw :Ag! -i <space>app/workers/<C-Left><Left>
+map <space>sr :Ag! -i <space>app/javascript_apps/songs<C-Left><Left>
+map <space>sl :Ag! -i <space>lib/<C-Left><Left>
+map <space>sp :Ag! -i <space>public/<C-Left><Left>
+map <space>st :Ag! -i <space>spec/<C-Left><Left>
+map <space>sC :Ag! -i <space>config/<C-Left><Left>
+map <space>sD :Ag! -i <space>db/<C-Left><Left>
+map <space>sf :Ag! -i <space>spec/support/factories/<C-Left><Left>
+map <space>sd :Ag! -i <space>%%<C-Left><Left>
+
 
 "map <leader>jl :CtrlP lib/investr<cr>
 "map <leader>jc :CtrlP config<cr>
@@ -235,3 +273,30 @@ map <space>sf :Ag! -i spec/support/factories/<C-Left>
 "map <space>aa :Ag! -i<space>
 "map <space>sa :Ag! -i lib/<C-Left>
 
+" Switch Between test and production code
+function! OpenTestAlternate()
+  let new_file = AlternateForCurrentFile()
+  exec ':e ' . new_file
+endfunction
+function! AlternateForCurrentFile()
+  let current_file = expand("%")
+  let new_file = current_file
+  let in_spec = match(current_file, '^spec/') != -1
+  let going_to_spec = !in_spec
+  let in_app = match(current_file, '\<controllers\>') != -1 || match(current_file, '\<models\>') != -1 || match(current_file, '\<workers\>') != -1 || match(current_file, '\<views\>') != -1 || match(current_file, '\<helpers\>') != -1
+  if going_to_spec
+    if in_app
+      let new_file = substitute(new_file, '^app/', '', '')
+    end
+    let new_file = substitute(new_file, '\.e\?rb$', '_spec.rb', '')
+    let new_file = 'spec/' . new_file
+  else
+    let new_file = substitute(new_file, '_spec\.rb$', '.rb', '')
+    let new_file = substitute(new_file, '^spec/', '', '')
+    if in_app
+      let new_file = 'app/' . new_file
+    end
+  endif
+  return new_file
+endfunction
+nnoremap <leader>. :call OpenTestAlternate()<cr>
