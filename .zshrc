@@ -101,7 +101,6 @@ alias brew_stop="brew services stop mariadb; brew services stop postgresql; brew
 alias secrets="aws s3 cp s3://secrets.tunecore.com/development/tc-www/secrets.txt .env.development; aws s3 cp s3://secrets.tunecore.com/test/tc-www/secrets.txt .env.test"
 alias docker_load_db="docker-compose exec web bundle exec rake db:load"
 alias docker_test_load_db="docker-compose exec test bundle exec rake db:load"
-
 alias tmux="TERM=screen-256color-bce tmux"
 
 alias pg-start="launchctl load ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"

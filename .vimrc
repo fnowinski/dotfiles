@@ -261,7 +261,6 @@ map <space>sD :Ag! -i <space>db/<C-Left><Left>
 map <space>sf :Ag! -i <space>spec/support/factories/<C-Left><Left>
 map <space>sd :Ag! -i <space>%%<C-Left><Left>
 
-
 "map <leader>jl :CtrlP lib/investr<cr>
 "map <leader>jc :CtrlP config<cr>
 "map <leader>jp :CtrlP priv<cr>
