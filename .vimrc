@@ -14,7 +14,6 @@ Plugin 'dracula/vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'epmatsw/ag.vim'
-Plugin 'kien/ctrlp.vim'
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-surround'
@@ -47,6 +46,7 @@ Plugin 'vim-syntastic/syntastic'
 Plugin 'gosukiwi/vim-atom-dark'
 Plugin 'sonph/onehalf'
 Plugin 'pwntester/cobalt2.vim'
+Plugin 'wincent/command-t'
 
 call vundle#end()
 filetype plugin indent on
@@ -56,9 +56,6 @@ syntax on
 set t_Co=256
 set background=dark
 "colorscheme dracula
-"colorscheme onehalfdark
-
-"hi Normal ctermbg=none
 
 " Map Leader
 let mapleader = ","
@@ -67,15 +64,16 @@ let mapleader = ","
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 0
 let g:jsx_ext_required = 0
-
 let g:airline_theme='luna' " luna
 let &t_AB="\e[48;5;%dm"
 let &t_AF="\e[38;5;%dm"
 let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
 let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-let g:ctrlp_use_caching = 0
 
+set wildignore+=*/node_modules/*
+set wildignore+=*/bower_components/*
+set wildignore+=*/_build/*
+set wildignore+=*/deps/*
 runtime macros/matchit.vim
 
 set number
@@ -112,23 +110,20 @@ imap cll console.log();<Esc>==f(a
 nmap cll yiwocll
 imap ppp binding.pry
 nmap ppp yiwoppp
-imap dbg debugger
-nmap dbg yiwodbg
+imap dgr debugger
+nmap dgr yiwodbg
 imap iee IEx.pry
 nmap iee yiwoiee
 
 " Search directory
-nnoremap <leader>ta :ta<SPACE>
 nnoremap <leader>tb :TagbarToggle<CR>
 nnoremap <leader><space> :noh<CR>
-nnoremap <leader>C :CtrlPClearCache<cr>
 nnoremap <leader>x :only<CR>
 map \ :NERDTreeToggle<CR>
 map \| :NERDTreeFind<CR>
-map <leader>m :CtrlPBuffer<CR>
 map <leader>rt :!~/.vim/bin/update_ctags 2>/dev/null &<CR>
 map <leader>g :Gblame<CR>
-map <leader>bb ,m<cr>
+map <space>b <c-^>
 nmap <space>w :w<cr>
 nmap <space>q :q!<cr>
 nmap <leader>q :wq<cr>
@@ -136,6 +131,8 @@ nmap <leader>w :set wrap!<cr>
 map <space><tab> :Tabularize /
 map <leader>p :pu<cr>
 nmap 0 ^
+cnoremap <C-A> <Home>
+nnoremap <leader>m :CommandTMRU<CR>
 
 autocmd VimResized * :wincmd =
 imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
@@ -153,6 +150,12 @@ vnoremap <leader>ff :m '<-2<CR>gv=gv
 nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
 nnoremap <leader>= :wincmd =<cr>
 
+" Format file
+nnoremap <space>f gg=G
+
+" Sort
+vnoremap <leader>S :sort<cr>
+
 " Split windows
 map <leader>- :split<cr>
 map <leader>\ :vsplit<cr>
@@ -162,13 +165,13 @@ au VimEnter * highlight clear SignColumn
 
 " Rename Current File
 function! RenameFile()
-    let old_name = expand('%')
-    let new_name = input('New file name: ', expand('%'), 'file')
-    if new_name != '' && new_name != old_name
-        exec ':saveas ' . new_name
-        exec ':silent !rm ' . old_name
-        redraw!
-    endif
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
 endfunction
 map <leader>n :call RenameFile()<cr>
 
@@ -203,29 +206,25 @@ nmap <space>T :w<cr>:call RunCurrentSpecFile()<CR>
 nmap <space>t :w<cr>:call RunNearestSpec()<CR>
 nmap <space>l :call RunLastSpec()<CR>
 nmap <space>A :call RunAllSpecs()<CR>
-"let g:rspec_command = "!bundle exec spring rspec --drb {spec}"
-"let g:rspec_command = "Dispatch bin/rspec {spec}"
-"nmap <space>T :w<cr>:call RunCurrentSpecFile()<CR>
-"nmap <space>t :w<cr>:call RunNearestSpec()<CR>
-"nmap <space>l :call RunLastSpec()<CR>
-"nmap <space>A :call RunAllSpecs()<CR>
 
 " Navigation
-map <leader>ja :CtrlP app<CR>
-map <leader>jm :CtrlP app/models<CR>
-map <leader>jc :CtrlP app/controllers<CR>
-map <leader>jv :CtrlP app/views<CR>
-map <leader>jh :CtrlP app/helpers<CR>
-map <leader>js :CtrlP app/services<CR>
-map <leader>jw :CtrlP app/workers<CR>
-map <leader>jr :CtrlP app/javascript_apps/songs<CR>
-map <leader>jl :CtrlP lib<CR>
-map <leader>jp :CtrlP public<CR>
-map <leader>jt :CtrlP spec<CR>
-map <leader>jC :CtrlP config<CR>
-map <leader>jD :CtrlP db<CR>
-map <leader>jf :CtrlP spec/support/factories<CR>
-map <leader>jd :CtrlP %%<CR>
+map <leader>jj :CommandT<CR>
+map <leader>ja :CommandT app<CR>
+map <leader>jm :CommandT app/models<CR>
+map <leader>jc :CommandT app/controllers<CR>
+map <leader>jv :CommandT app/views<CR>
+map <leader>jh :CommandT app/helpers<CR>
+map <leader>js :CommandT app/services<CR>
+map <leader>jw :CommandT app/workers<CR>
+map <leader>jr :CommandT app/javascript_apps/songs<CR>
+map <leader>je :CommandT app/services/distribution_system<CR>
+map <leader>jl :CommandT lib<CR>
+map <leader>jp :CommandT public<CR>
+map <leader>jt :CommandT spec<CR>
+map <leader>jC :CommandT config<CR>
+map <leader>jD :CommandT db<CR>
+map <leader>jf :CommandT spec/support/factories<CR>
+map <leader>jd :CommandT %%<CR>
 
 map <leader>aa :Ag! -i <c-r>=expand("<cword>")<cr><cr>
 map <leader>sa :Ag! -i <c-r>=expand("<cword>")<cr> app/<cr>
@@ -236,6 +235,7 @@ map <leader>sh :Ag! -i <c-r>=expand("<cword>")<cr> app/helpers<cr>
 map <leader>ss :Ag! -i <c-r>=expand("<cword>")<cr> app/services<cr>
 map <leader>sw :Ag! -i <c-r>=expand("<cword>")<cr> app/workers<cr>
 map <leader>sr :Ag! -i <c-r>=expand("<cword>")<cr> app/javascript_apps/songs<cr>
+map <leader>se :Ag! -i <c-r>=expand("<cword>")<cr> app/services/distribution_system<cr>
 map <leader>sl :Ag! -i <c-r>=expand("<cword>")<cr> lib/<cr>
 map <leader>sp :Ag! -i <c-r>=expand("<cword>")<cr> public/<cr>
 map <leader>st :Ag! -i <c-r>=expand("<cword>")<cr> spec/<cr>
@@ -244,7 +244,7 @@ map <leader>sD :Ag! -i <c-r>=expand("<cword>")<cr> db/<cr>
 map <leader>sf :Ag! -i <c-r>=expand("<cword>")<cr> spec/support/factories<cr>
 map <leader>sd :Ag! -i <c-r>=expand("<cword>")<cr> %%<cr>
 
-map <space>aa :Ag! -i <space>
+map <space>aa :Ag! -i<space>
 map <space>sa :Ag! -i <space>app/<C-Left><Left>
 map <space>sm :Ag! -i <space>app/models/<C-Left><Left>
 map <space>sc :Ag! -i <space>app/controllers/<C-Left><Left>
@@ -253,6 +253,7 @@ map <space>sh :Ag! -i <space>app/helpers/<C-Left><Left>
 map <space>ss :Ag! -i <space>app/services/<C-Left><Left>
 map <space>sw :Ag! -i <space>app/workers/<C-Left><Left>
 map <space>sr :Ag! -i <space>app/javascript_apps/songs<C-Left><Left>
+map <space>se :Ag! -i <space>app/services/distribution_system<C-Left><Left>
 map <space>sl :Ag! -i <space>lib/<C-Left><Left>
 map <space>sp :Ag! -i <space>public/<C-Left><Left>
 map <space>st :Ag! -i <space>spec/<C-Left><Left>

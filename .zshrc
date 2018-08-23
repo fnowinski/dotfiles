@@ -1,9 +1,17 @@
 export ZSH=/Users/frank/.oh-my-zsh
 export PATH="$HOME/.rbenv/bin:$PATH"
-#eval "$(rbenv init -)"
+export PATH="$HOME/frank/.rbenv/shims:${PATH}"
+eval "$(rbenv init -)"
+
+# Source Files
+typeset -a secret_files
+secret_files+=~/.tunecorerc
+
+for file in $secret_files[@]; do
+  source "$file"
+done
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=red
-
 # Themes
 ZSH_THEME="cobalt2"
 HYPHEN_INSENSITIVE="true"
@@ -13,126 +21,96 @@ plugins=(git)
 export EDITOR='vim'
 
 bindkey -e
-bindkey '[C' forward-word
-bindkey '[D' backward-word
 
-# Refresh
+# Refresh Zsh
 alias rz="source $ZSH/oh-my-zsh.sh"
-alias prodb='ssh centos@ec2-52-203-21-244.compute-1.amazonaws.com'
-alias prodb3='ssh -i ~/.ssh/tunecore1.pem centos@ec2-52-203-21-244.compute-1.amazonaws.com'
-alias ssh_batch="ssh -i ~/.ssh/tunecore1.pem ec2-user@ec2-34-237-114-113.compute-1.amazonaws.com"
-alias ssh_sip="ssh -i ~/.ssh/tunecore1.pem centos@ec2-54-81-144-199.compute-1.amazonaws.com"
-alias studio3="ssh centos@ec2-34-192-19-31.compute-1.amazonaws.com"
-alias studio4="ssh centos@ec2-52-0-169-56.compute-1.amazonaws.com"
-alias open_petri="ssh -i ~/.ssh/tunecore1.pem root@"
-alias vpn_petri="ssh -i ~/.ssh/tunecore1.pem ec2-user@54.172.226.164"
-alias sidekiq_ssh="ssh -i ~/.ssh/tunecore1.pem centos@ec2-34-227-215-75.compute-1.amazonaws.com"
 
-# Files
+# Config Files
 alias vcon="vim ~/.vimrc"
 alias zcon="vim ~/.zshrc"
 alias bcon="vim ~/.bash_profile"
-alias tcon='vim ~/.tmux.conf'
+alias tcon='vim ~/.tunecorerc'
+alias mcon='vim ~/.tmux.conf'
+alias ncon='vim ~/.config/nvim/init.vim'
 alias omz="vim ~/.oh-my-zsh"
 alias gcon='vim ~/.gitconfig'
-alias aliases='vim ~/.bash_profile'
 
 # Directories
 alias dev='cd /Users/frank/Development'
+alias investr='cd /Users/frank/Development/elixir/investr'
 alias book='cd /Users/frank/Development/projects/bookworm/bookworm-react'
-alias dub='cd /Users/frank/Development/tunecore/tc-www'
-alias social='cd /Users/frank/Projects/tc-social'
-alias stats='cd /Users/frank/Projects/stats'
-alias petri='cd /Users/frank/Projects/petri'
-alias sip='cd /Users/frank/Projects/Sip'
-alias tunecore='cd /Users/frank/Projects/tunecore/'
-alias blog='cd /Users/frank/Projects/blog/'
 alias cism="cd /Users/frank/exercism/elixir"
-alias @='where am i'
+
+# Commands
+alias @='whereami'
+alias caller="caller.select { |file| file.include?('tc-www/app') }"
 alias be='bundle exec'
 alias pryr="prybaby -r"
 alias econ="iex -S mix"
+alias estart="mix phx.server"
+alias ors='lsof -wni tcp:3000'
+alias osp='ps -ef | grep spring'
+alias ngr='sudo pkill nginx;sudo nginx'
+alias tags="bundle exec rake db:migrate && ctags -R ."
+alias kside="ps -ef | grep sidekiq | grep -v grep | awk '{print $2}' | xargs kill - -ef | grep sidekiq | grep -v grep | awk '{print $2}' | xargs kill -9"
+alias tkill="killall tmux"
+alias tnew="tmux new -s "
 
+# Git
 alias diff='git diff --name-only --diff-filter=U'
 alias master='git co master && git pull origin master && git fetch'
 alias amend='git commit --amend --no-edit'
 alias push='git push -f origin HEAD'
-
-alias ors='lsof -wni tcp:3000'
-alias osp='ps -ef | grep spring'
-alias jenkins='ssh -i ~/.ssh/dropkloud-jenkins.pem ec2-user@ec2-54-204-17-11.compute-1.amazonaws.com'
-alias jenkins2"ssh -i ~/.ssh/dropkloud-jenkins.pem ec2-user@54.204.17.11" # From Andrew
-alias ngr='sudo pkill nginx;sudo nginx'
-alias tags="bundle exec rake db:migrate && ctags -R ."
-alias kside="ps -ef | grep sidekiq | grep -v grep | awk '{print $2}' | xargs kill - -ef | grep sidekiq | grep -v grep | awk '{print $2}' | xargs kill -9"
-
-# Social/stats servers
-alias social-up='PORT=5000 foreman start -f Procfile.development'
-alias stats-up='PORT=9292 foreman s -f Procfile.development'
-
-# Stats rake tasks
-alias social-import-1='rake jgm:import_artist_content QUEUE=medium SOURCES="facebook_posts youtube soundcloud mixcloud"'
-alias social-import-2='rake jgm:twitter:import_pro_tweets'
-alias social-import-3='rake jgm:instagram:import_media'
-alias social-import-YT='rake jgm:import_artist_content QUEUE=medium SOURCES="youtube"'
-alias social-import-MC='rake jgm:import_artist_content QUEUE=medium SOURCES="mixcloud"'
-alias social-import-FB='rake jgm:import_artist_content QUEUE=medium SOURCES="facebook_posts"'
-alias social-import-SC='rake jgm:import_artist_content QUEUE=medium SOURCES="soundcloud"'
-
-alias tkill="killall tmux"
-alias tnew="tmux new -s "
-
-source $ZSH/oh-my-zsh.sh
-
-Terminate () {
-  lsof -i TCP:$1 | grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn} IPv4 | awk '{print $2}' | xargs kill -9
-}
+alias c="clear"
 
 # Docker
 alias docker_start='docker-sync-stack start'
-alias dcon='docker-compose exec web bundle exec spring rails console'
-alias dspec='docker-compose exec test bundle exec rspec'
-alias docker_spring_rspec='docker-compose exec test bundle exec spring rspec'
+alias dup='docker-compose up'
+alias dcon='docker-compose exec puma bundle exec spring rails console'
+alias drspec='docker-compose exec test bundle exec rspec'
+alias dspec='docker-compose exec test bundle exec spring rspec'
 alias docker_stop='docker-compose down'
 alias docker_destroy='docker rmi -f `docker images -q -a`' #run docker down before
 alias docker_sidekiq="ssh -i ~/.ssh/tunecore1.pem centos@ec2-35-153-109-45.compute-1.amazonaws.com"
 alias brew_start="brew services start mariadb; brew services start postgresql; brew services start redis; sudo brew services start nginx"
 alias brew_stop="brew services stop mariadb; brew services stop postgresql; brew services stop redis; sudo brew services stop nginx"
-alias secrets="aws s3 cp s3://secrets.tunecore.com/development/tc-www/secrets.txt .env.development; aws s3 cp s3://secrets.tunecore.com/test/tc-www/secrets.txt .env.test"
-alias docker_load_db="docker-compose exec web bundle exec rake db:load"
-alias docker_test_load_db="docker-compose exec test bundle exec rake db:load"
+alias dload_test="docker-compose exec test bundle exec rake db:load"
 alias tmux="TERM=screen-256color-bce tmux"
 
-alias pg-start="launchctl load ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
-alias pg-stop="launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
-alias c="clear"
+Terminate () {
+  lsof -i TCP:$1 | grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn} IPv4 | awk '{print $2}' | xargs kill -9
+}
 
-function dpry {
-  web_pid=$(docker ps | grep tcwww_web | awk '{print $1}')
+dpry () {
+  web_pid=$(docker ps | grep tc-www_puma | awk '{print $1}')
   docker attach $web_pid
 }
 
-function dstart() {
+dstart () {
   docker_stop;
   docker-sync clean;
   docker_start;
 }
 
-function docker_refresh() {
+docker_refresh () {
   docker_stop;
   docker_destroy;
   docker_start;
 }
 
-function docker_copy () {
-  docker cp $(docker ps -qf "name=web"):app/$1 $1
+dcopy () {
+  docker cp $(docker ps -qf "name=puma"):app/$1 $1
 }
 
-function docker_rake () {
+drake () {
   commands_array=($@)
   len=${#commands_array[@]}
   other_commands=${commands_array[@]:2:$len-1}
   docker-compose exec $1 rake $2 $other_commands
+}
+
+dbash () {
+  docker-compose exec $1 bash
 }
 
 github () {
@@ -156,3 +134,6 @@ git_repo () {
 regex () {
     gawk 'match($0,/'$1'/, ary) {print ary['${2:-'0'}']}'
 }
+
+stty -ixon -ixoff
+source $ZSH/oh-my-zsh.sh

@@ -1,0 +1,13 @@
+*~
+.DS_Store
+tags
+.gitignore
+node_modules/*
+public/cover_art_tmp/*
+public/faqs/*
+public/fonts/*
+public/press/*
+public/images/*
+public/version/*
+_build/*
+deps/*
